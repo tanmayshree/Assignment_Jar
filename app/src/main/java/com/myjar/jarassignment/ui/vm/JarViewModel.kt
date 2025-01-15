@@ -20,7 +20,11 @@ class JarViewModel : ViewModel() {
 
     fun fetchData() {
         viewModelScope.launch {
-            repository.fetchResults()
+            println("62000 inside vierw model")
+            repository.fetchResults().collect() {
+                _listStringData.value = it
+                println("62000 x view model $it")
+            }
         }
     }
 }
