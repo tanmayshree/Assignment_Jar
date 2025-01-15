@@ -1,5 +1,6 @@
 package com.myjar.jarassignment.ui.composables
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,8 +40,6 @@ fun AppNavigation(
         composable("item_list") {
             ItemListScreen(
                 viewModel = viewModel,
-                onNavigateToDetail = { selectedItem -> navigate.value = selectedItem },
-                navigate = navigate,
                 navController = navController
             )
         }
@@ -53,27 +53,36 @@ fun AppNavigation(
 @Composable
 fun ItemListScreen(
     viewModel: JarViewModel,
-    onNavigateToDetail: (String) -> Unit,
-    navigate: MutableState<String>,
     navController: NavHostController
 ) {
+    val searchText = remember { mutableStateOf("") }
     val items = viewModel.listStringData.collectAsState()
 
-    if (navigate.value.isNotBlank()) {
-        val currRoute = navController.currentDestination?.route.orEmpty()
-        if (!currRoute.contains("item_detail")) {
-            navController.navigate("item_detail/${navigate.value}")
-        }
-    }
+//    if (navigate.value.isNotBlank()) {
+//        val currRoute = navController.currentDestination?.route.orEmpty()
+//        if (!currRoute.contains("item_detail")) {
+//            navController.navigate("item_detail/${navigate.value}")
+//        }
+//    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        items(items.value) { item ->
+        item {
+            BasicTextField(
+                value = searchText.value,
+                onValueChange = {
+                    searchText.value = it
+                },
+                keyboardOptions = KeyboardOptions.Default,
+                modifier = Modifier.border(1.dp, Color.Black).fillMaxWidth().padding(10.dp)
+            )
+        }
+        items(items.value.filter { if (searchText.value.isBlank()) true else it.name.contains(searchText.value, ignoreCase = true) }) { item ->
             ItemCard(
                 item = item,
-                onClick = { onNavigateToDetail(item.id) }
+                onClick = { navController.navigate("item_detail/${item.id}")}
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -88,7 +97,11 @@ fun ItemCard(item: ComputerItem, onClick: () -> Unit) {
             .padding(8.dp)
             .clickable { onClick() }
     ) {
-        Text(text = item.name, fontWeight = FontWeight.Bold, color = Color.Transparent)
+        Text(text = item.name, fontWeight = FontWeight.Bold, color = Color.Black)
+        item.data?.color?.let { Text(text = it, fontWeight = FontWeight.Medium, color = Color.Black) }
+        item.data?.capacity?.let { Text(text = it, fontWeight = FontWeight.Medium, color = Color.Black) }
+        item.data?.price?.let { Text(text = it.toString(), fontWeight = FontWeight.Medium, color = Color.Black) }
+        item.data?.description?.let { Text(text = it, fontWeight = FontWeight.Medium, color = Color.Black) }
     }
 }
 
