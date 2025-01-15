@@ -98,10 +98,10 @@ fun ItemCard(item: ComputerItem, onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Text(text = item.name, fontWeight = FontWeight.Bold, color = Color.Black)
-        item.data?.color?.let { Text(text = it, fontWeight = FontWeight.Medium, color = Color.Black) }
-        item.data?.capacity?.let { Text(text = it, fontWeight = FontWeight.Medium, color = Color.Black) }
-        item.data?.price?.let { Text(text = it.toString(), fontWeight = FontWeight.Medium, color = Color.Black) }
-        item.data?.description?.let { Text(text = it, fontWeight = FontWeight.Medium, color = Color.Black) }
+        item.data?.color?.let { Text(text = "Color: $it", fontWeight = FontWeight.Medium, color = Color.Black) }
+        item.data?.capacity?.let { Text(text = "Capacity: $it", fontWeight = FontWeight.Medium, color = Color.Black) }
+        item.data?.price?.let { Text(text = "Price: $it", fontWeight = FontWeight.Medium, color = Color.Black) }
+        item.data?.description?.let { Text(text = "Description: $it", fontWeight = FontWeight.Medium, color = Color.Black) }
     }
 }
 
